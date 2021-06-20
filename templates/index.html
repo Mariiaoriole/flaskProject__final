@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Прожиточный минимум</title>
+    <style>
+        h1{
+            text-align: center;
+            color: rgb(121,37,37);
+            font-family: system-ui;
+        }
+        #text1-container {
+            color: rgb(121,37,37);
+            font-family: system-ui;
+            font-size: 18px;
+            background-color: aliceblue;
+            opacity: 0.8;
+            width: 90%;
+            background-size: cover;
+            height: 90%;
+            margin: auto;
+            animation-duration: 3s;
+            animation-name: slidein;
+            text-indent: 30px;
+            text-align: justify;
+        }
+
+        @keyframes slidein {
+            from {
+                margin-left: 90%;
+                width: 90%;
+            }
+
+            to {
+                margin-left: 5%;
+                width: 90%;
+            }
+        }
+
+
+        #main-container {
+            background-image: url("https://static.news.ru/photo/b78ed324-979c-11eb-a7fe-96000091f725_660.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+
+        #chart {
+            background-color: aliceblue;
+            opacity: 0.8;
+            width: 80%;
+
+        }
+
+        #chart-container {
+
+            width: 80%;
+            height: 90%;
+            margin: auto;
+            display: table;
+            padding:10px;
+        }
+
+        TD#leftcol {
+            width: 40%;
+            background: #F0F8FFFF;
+            opacity: 0.8;
+            color: rgb(121,37,37);
+            font-family: system-ui;
+            font-size:18px;
+            vertical-align: top;
+            text-indent: 30px;
+            text-align: justify;
+        }
+
+
+        TD#rightcol {
+            width: 40%;
+            background: #F0F8FFFF;
+            opacity: 0.8;
+            color: rgb(121,37,37);
+            font-family: system-ui;
+            font-size: 18px;
+            vertical-align: top;
+            text-indent: 30px;
+            text-align: justify;
+        }
+
+        #spacer {
+             width: 4%;
+         }
+
+        #maket {
+            width: 90%;
+            margin-left: 5%;
+            margin-right: 5%;
+        }
+        </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js" integrity="sha512-VCHVc5miKoln972iJPvkQrUYYq7XpxXzvqNfiul1H4aZDwGBGC0lq373KNleaB2LpnC2a/iNfE5zoRYmB4TRDQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <h1>Прожиточный минимум в Москве</h1>
+    <div id="main-container">
+        <div id="text1-container">
+            <p>В столице утвержден прожиточный минимум на 2021 год. Согласно постановлению мэра Москвы Сергея Собянина он составляет <b>18 029 рублей</b>, а для трудоспособного населения - <b>20 589 рублей</b>, что почти вдвое больше общероссийского. Причем теперь прожиточный минимум устанавливается сразу на год, а не по кварталам, как прежде.</p>
+        </div>
+        <div id="chart-container">
+            <canvas id="chart"></canvas>
+        </div>
+        <table cellspacing="0" id="maket">
+            <tr>
+                <td id="leftcol">Исходя из величины прожиточного минимума рассчитываются многие соцвыплаты. К примеру, устанавливается ежемесячное пособие на ребенка в возрасте от 3 до 7 лет в малообеспеченных семьях в размере 50% от прожиточного минимума ребенка, что в Москве в настоящее время составляет более чем <b>7 000 рублей</b>. Кроме того, при усыновлении ребенка родителям выплачивается единовременная выплата в размере пяти прожиточных минимумов - <b>90 145 рублей</b>), на второго усыновленного ребенка - <b>126 203 рубля</b>, а на третьего и последующих детей - 10 прожиточных минимумов - <b>180 290 рублей</b>.</td>
+                <td id="spacer"></td>
+                <td id="rightcol">Прожиточный минимум - сумма, которая законодательно считается минимально необходимой для жизни. С этого года изменилась методика его подсчета. Раньше он зависел от <b>стоимости потребительской корзины</b> с минимальным набором продуктов питания, товаров и услуг, а также учитывал необходимые к уплате ежемесячные <b>платежи и сборы</b>. Теперь же он привязан к <b>среднему доходу на
+человека</b> по стране. Кроме того, с 2000 года его величина изменялась ежеквартально. В новом году прожиточный минимум устанавливается сразу на год.</td>
+                        </tr>
+        </table>
+    </div>
+</body>
+<script>
+    const ctx = document.getElementById('chart');
+
+    const config = getDataConfig({{ data | tojson }});
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: config,
+    });
+
+    function getDataConfig(data) {
+        let labels = [];
+        let dataRows = [];
+
+        for (let i = 0; i < data.length; i++) {
+            const current = data[i];
+
+            if (current['quarter_name'] && current['average_count']) {
+                labels.push(current['quarter_name']);
+                dataRows.push(current['average_count']);
+            }
+        }
+
+        const cfg = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Рубли',
+                    animations: {
+                        y: {
+                            duration: 2000,
+                            delay: 500
+                        }
+                    },
+                    data: dataRows,
+                    borderColor:'#D3806F',
+                    backgroundColor:'#D3806F',
+                    fill: true,
+                    borderWidth: 1,
+                    pointStyle: 'crossRot',
+                    pointRadius: 3,
+                    pointBorderColor: 'rgb(121,37,37)',
+                }
+            ]
+        };
+
+        return cfg;
+    }
+
+    console.log(getDataConfig( {{ data | tojson }}));
+</script>
+</html>
