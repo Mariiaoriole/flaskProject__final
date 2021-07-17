@@ -1,2 +1,0 @@
-API_KEY = ''
-API_MAIN_URL = 
